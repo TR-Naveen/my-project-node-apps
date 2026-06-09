@@ -1,0 +1,424 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Database Management API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "operationId": "authSignup",
+        "summary": "User signup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "confirmPassword": { "type": "string" }
+                },
+                "required": ["name", "email", "password", "confirmPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User registered successfully" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "authLogin",
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "authLogout",
+        "summary": "User logout",
+        "responses": {
+          "200": { "description": "Logout successful" }
+        }
+      }
+    },
+    "/api/databases": {
+      "get": {
+        "operationId": "getDatabases",
+        "summary": "Get all databases",
+        "responses": {
+          "200": { "description": "List of databases" }
+        }
+      },
+      "post": {
+        "operationId": "createDatabase",
+        "summary": "Create a new database",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Database created" }
+        }
+      }
+    },
+    "/api/databases/{name}": {
+      "delete": {
+        "operationId": "dropDatabase",
+        "summary": "Drop a database",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Database dropped" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables": {
+      "get": {
+        "operationId": "getTables",
+        "summary": "Get tables for a database",
+        "parameters": [
+          {
+            "name": "dbName",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of tables" }
+        }
+      },
+      "post": {
+        "operationId": "createTable",
+        "summary": "Create a table in database",
+        "parameters": [
+          {
+            "name": "dbName",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Table created" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}": {
+      "get": {
+        "operationId": "getTableData",
+        "summary": "Get columns and rows for a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Table data" }
+        }
+      },
+      "delete": {
+        "operationId": "dropTable",
+        "summary": "Drop a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Table dropped" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}/rename": {
+      "put": {
+        "operationId": "renameTable",
+        "summary": "Rename a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newName": { "type": "string" }
+                },
+                "required": ["newName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Table renamed" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}/columns": {
+      "post": {
+        "operationId": "tableAddColumn",
+        "summary": "Add a new column to a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "length": { "type": "string" },
+                  "notNull": { "type": "boolean" },
+                  "defaultValue": { "type": "string" }
+                },
+                "required": ["name", "type"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Column added" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}/columns/{columnName}": {
+      "delete": {
+        "operationId": "tableDeleteColumn",
+        "summary": "Delete a column from a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "columnName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Column deleted" }
+        }
+      },
+      "put": {
+        "operationId": "tableRenameColumn",
+        "summary": "Rename an existing column in a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "columnName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newName": { "type": "string" }
+                },
+                "required": ["newName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Column renamed" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}/rows": {
+      "get": {
+        "operationId": "getRows",
+        "summary": "Get all rows in a table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Rows list" }
+        }
+      },
+      "post": {
+        "operationId": "insertRow",
+        "summary": "Insert a row into table",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Row inserted" }
+        }
+      }
+    },
+    "/api/databases/{dbName}/tables/{tableName}/rows/{id}": {
+      "get": {
+        "operationId": "getRow",
+        "summary": "Get single row",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Single row" }
+        }
+      },
+      "put": {
+        "operationId": "updateRow",
+        "summary": "Update single row",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Row updated" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRow",
+        "summary": "Delete single row",
+        "parameters": [
+          { "name": "dbName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Row deleted" }
+        }
+      }
+    },
+    "/api/edits/lock": {
+      "post": {
+        "operationId": "lockEdit",
+        "summary": "Request edit lock for a table",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dbName": { "type": "string" },
+                  "tableName": { "type": "string" }
+                },
+                "required": ["dbName", "tableName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Lock acquired" },
+          "409": { "description": "Already locked by another user" }
+        }
+      }
+    },
+    "/api/edits/heartbeat": {
+      "post": {
+        "operationId": "editHeartbeat",
+        "summary": "Keep edit lock alive",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dbName": { "type": "string" },
+                  "tableName": { "type": "string" }
+                },
+                "required": ["dbName", "tableName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/api/edits/unlock": {
+      "post": {
+        "operationId": "unlockEdit",
+        "summary": "Release edit lock",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dbName": { "type": "string" },
+                  "tableName": { "type": "string" }
+                },
+                "required": ["dbName", "tableName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Unlocked" }
+        }
+      }
+    }
+  }
+}
